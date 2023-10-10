@@ -347,6 +347,8 @@
 -r:"Library/Bee/artifacts/2400b0aE.dag/UnityEngine.UI.ref.dll"
 -analyzer:"/home/penguin/Unity/Hub/Editor/2022.3.9f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"/home/penguin/Unity/Hub/Editor/2022.3.9f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
+"Assets/GeneralScripts/DamageableObject.cs"
+"Assets/GeneralScripts/MapGenerator.cs"
 "Assets/Player/PlayerBehaviour.cs"
 "Assets/Player/PlayerHead.cs"
 "Assets/TextMesh Pro/Examples & Extras/Scripts/Benchmark01.cs"
