@@ -55,11 +55,11 @@ public class PlayerBehaviour : MonoBehaviour
                 vRotationalObject.transform.Rotate(-rspeed, 0f, 0f);
         }
 
-        Debug.Log(
-            ((int)vx_angle).ToString() + "; " +
-            ((int)vRotationalObject.transform.eulerAngles.y).ToString() + "; " +
-            ((int)vRotationalObject.transform.eulerAngles.z).ToString()
-        );
+        // Debug.Log(
+        //     ((int)vx_angle).ToString() + "; " +
+        //     ((int)vRotationalObject.transform.eulerAngles.y).ToString() + "; " +
+        //     ((int)vRotationalObject.transform.eulerAngles.z).ToString()
+        // );
     }
 
     void FixedUpdate() {

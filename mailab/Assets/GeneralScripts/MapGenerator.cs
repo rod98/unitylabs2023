@@ -9,8 +9,16 @@ public class MapGenerator : MonoBehaviour
     public GameObject house_prefab;
 
     GameObject Generate() {
+        float y_size = 0;
+        if (house_prefab.transform.childCount > 0) {
+            GameObject house_model = house_prefab.transform.GetChild(0).gameObject;
+            y_size = house_model.GetComponent<Renderer>().bounds.size.y;
+        }
+        else {
+            y_size = house_prefab.GetComponent<Renderer>().bounds.size.y;
+        }
         GameObject level = new GameObject();
-        GameObject house = Instantiate(house_prefab, new Vector3(5, house_prefab.GetComponent<Renderer>().bounds.size.y / 2f, 5), Quaternion.identity);
+        GameObject house = Instantiate(house_prefab, new Vector3(5, y_size / 2f, 5), Quaternion.identity);
 
         Debug.Log("Instantiated the house");
 
