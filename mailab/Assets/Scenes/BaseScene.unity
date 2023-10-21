@@ -158,6 +158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHead: {fileID: 1254482175}
   playerBody: {fileID: 633186105}
+  weapon_prefab: {fileID: 5242172590051723172, guid: 8ec56dccb7292f60aa96d0ee2e909b04, type: 3}
 --- !u!136 &633186107
 CapsuleCollider:
   m_ObjectHideFlags: 0
