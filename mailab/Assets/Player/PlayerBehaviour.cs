@@ -1,12 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerBehaviour : MonoBehaviour
 {
     public GameObject playerHead;
     public GameObject playerBody;
     public GameObject weapon_prefab;
+    public GameObject killLabelObject = null;
+
+    private int killPoints = 0;
+    private TextMeshProUGUI killLabelText = null;
     private float time = 0.0f;
     private float jumpTimeout = 0.5f;
     private float lastJump = 0.0f;
@@ -22,12 +28,22 @@ public class PlayerBehaviour : MonoBehaviour
     private GameObject hRotationalObject;
     private GameObject vRotationalObject;
 
-    void Start(){
+    public void AddKillPoints(int points) {
+        killPoints += points;
+
+        // Debug.Log("New   kill points: " + points.ToString());
+        // Debug.Log("Total kill points: " + killPoints.ToString());
+    }
+
+    void Start() {
         rigidBody = GetComponent<Rigidbody>();
         rigidBody.detectCollisions = true;
 
         hRotationalObject = playerBody;
         vRotationalObject = playerHead;
+
+        // if (killLabelObject)
+        killLabelText = killLabelObject.GetComponent<TextMeshProUGUI>();
         // playerObj = GetComponent<GameObject>();
     }
     void Update()
@@ -62,6 +78,8 @@ public class PlayerBehaviour : MonoBehaviour
         //     ((int)vRotationalObject.transform.eulerAngles.y).ToString() + "; " +
         //     ((int)vRotationalObject.transform.eulerAngles.z).ToString()
         // );
+        // if (killLabelText)
+        killLabelText.text = "Points: " + killPoints.ToString();
     }
 
     void FixedUpdate() {
@@ -84,9 +102,9 @@ public class PlayerBehaviour : MonoBehaviour
         //     audioSource.Play();
     }
 
-    private float ToRad(float degrees) {
-        return degrees * Mathf.PI / 180f;
-    }
+    // private float ToRad(float degrees) {
+    //     return degrees * Mathf.PI / 180f;
+    // }
 
     void ProcessControls() {
         KeyCode jumpKey = KeyCode.Space;
@@ -123,6 +141,9 @@ public class PlayerBehaviour : MonoBehaviour
 
             attack_obj.transform.rotation = hRotationalObject.transform.rotation;
 
+            DamagingObject dobj = attack_obj.GetComponent<DamagingObject>();
+            dobj.owner = this;
+
             Rigidbody rb = attack_obj.GetComponent<Rigidbody>();
             rb.velocity = 10 * vRotationalObject.transform.forward.normalized;
 
@@ -137,22 +158,32 @@ public class PlayerBehaviour : MonoBehaviour
         
 
         if (Input.GetKey(rghtKey))
-            lrsgn = 1;
+            lrsgn = -1;
         
         if (Input.GetKey(leftKey))
-            lrsgn = -1;
+            lrsgn = 1;
         
         // Debug.Log(playerHead.transform.rotation.y);
 
+        Vector3 speedDirection = new Vector3(0, 0, 0);
+
         if (fwsgn != 0) {
-            float x_speed = fwsgn * hspeed * Mathf.Sin(ToRad(hangle));
-            float z_speed = fwsgn * hspeed * Mathf.Cos(ToRad(hangle));
-            rigidBody.velocity = new Vector3(x_speed, rigidBody.velocity.y, z_speed);
+            speedDirection = hRotationalObject.transform.forward * fwsgn;
+            // float x_speed = fwsgn * hspeed * Mathf.Sin(ToRad(hangle));
+            // float z_speed = fwsgn * hspeed * Mathf.Cos(ToRad(hangle));
+            // rigidBody.velocity = new Vector3(x_speed, rigidBody.velocity.y, z_speed);
+            
+            // rigidBody.velocity = new Vector3(x_speed, rigidBody.velocity.y, z_speed);
         }
          if (lrsgn != 0) {
-            float x_speed =  lrsgn * hspeed * Mathf.Cos(ToRad(hangle));
-            float z_speed = -lrsgn * hspeed * Mathf.Sin(ToRad(hangle));
-            rigidBody.velocity = new Vector3(x_speed, rigidBody.velocity.y, z_speed);
+            Vector3 side    = Vector3.Cross(hRotationalObject.transform.forward, hRotationalObject.transform.up);
+            speedDirection  = speedDirection.normalized;
+            speedDirection += side.normalized * lrsgn;
+            // float x_speed =  lrsgn * hspeed * Mathf.Cos(ToRad(hangle));
+            // float z_speed = -lrsgn * hspeed * Mathf.Sin(ToRad(hangle));
+            // rigidBody.velocity = new Vector3(x_speed, rigidBody.velocity.y, z_speed);
         }
+        float y = rigidBody.velocity.y;
+        rigidBody.velocity = speedDirection.normalized * hspeed + new Vector3(0, y, 0);
     }
 }

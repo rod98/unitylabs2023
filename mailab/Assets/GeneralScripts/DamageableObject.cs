@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.UI;
@@ -12,6 +13,7 @@ public class DamageableObject : MonoBehaviour
     private float last_hit = 0.0f;
     private int health;
     public int maxHealth;
+    public int pointsForKill = 100;
     private Slider healthbar_comp;
     private GameObject healthbar_obj;
     public GameObject mainCamera_obj = null;
@@ -20,10 +22,22 @@ public class DamageableObject : MonoBehaviour
     private RectTransform canvas_rect_transform;
     private Renderer obj_renderer;
 
-    public void GetDamaged(int damage_value) {
+    // Dictionary < string, string > phonebook = new Dictionary < string, string > ();
+    private Dictionary<PlayerBehaviour, int> damagers = new Dictionary<PlayerBehaviour, int>(10);
+    private int totalDamagers = 0;
+
+    public void GetDamaged(int damage_value, PlayerBehaviour damager = null) {
         if (health > 0) {
             health -= damage_value;
             Debug.Log(name + " gets damaged by " + damage_value.ToString() + " (" + health.ToString() + " health left)");
+
+            if (damager) {
+                totalDamagers += 1;
+                if (damagers.ContainsKey(damager))
+                    damagers[damager] += 1;
+                else
+                    damagers[damager]  = 1;
+            }
         }
 
         if (health <= 0)
@@ -39,8 +53,15 @@ public class DamageableObject : MonoBehaviour
 
         if (healthbar_obj)
             Destroy(healthbar_obj);
+
+        foreach (KeyValuePair<PlayerBehaviour, int> entry in damagers)
+        {
+            // entry.Value or entry.Key
+            entry.Key.AddKillPoints((int)(pointsForKill * entry.Value * 100.0 / totalDamagers));
+        }
             
-        Destroy(this.gameObject);
+        Destroy(gameObject);
+        Destroy(this);
     }
 
     public void ResetHealth() {
@@ -99,25 +120,6 @@ public class DamageableObject : MonoBehaviour
             // GameObject canvas_obj = null;
             Canvas canvas_comp = canvas_obj.GetComponent<Canvas>();
             canvas_rect_transform = canvas_obj.GetComponent<RectTransform>();
-        
-
-            // Canvas
-            // canvas_obj = new GameObject("ScriptCanvas");
-
-            // canvas_obj.transform.SetParent(gameObject.transform, true);
-            // // canvas_obj.transform.localPosition = new Vector3(0, 0, 0);
-
-            // canvas_obj.AddComponent<Canvas>();
-            // canvas_comp = canvas_obj.GetComponent<Canvas>();
-            // // canvas_comp.transform.SetParent(canvas_obj.transform, true);
-            // float sy = gameObject.transform.localScale.y;
-            // canvas_comp.transform.localPosition = new Vector3(0, (object_height + 1) / sy, 0);
-
-            // canvas_comp.renderMode = RenderMode.WorldSpace;
-            // canvas_comp.worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-
-            // canvas_obj.AddComponent<CanvasScaler>();
-            // canvas_obj.AddComponent<GraphicRaycaster>();
 
             healthbar_obj = Instantiate(healthBarSlider_prefab, new Vector3(0, 0, 0), Quaternion.identity);
             // // healthbar_obj = new GameObject();
@@ -125,27 +127,23 @@ public class DamageableObject : MonoBehaviour
             healthbar_obj.name = "HealthbarObject";
 
             healthbar_obj.transform.localPosition = new Vector3(0, 0, 0);
-            // healthbar_obj.transform.localScale = new Vector3(5, 5, 5);
-            // // Slider healthbar_comp;
-            // // healthbar_comp = healthbar_obj.AddComponent<Slider>();
-            // // // Image healthbar_comp = healthbar_obj.AddComponent<Image>();
-            // // healthbar_obj.transform.localScale = new Vector3(0.1f, 0.1f, 1f);
             healthbar_comp = healthbar_obj.GetComponent<Slider>();
-            // healthbar_comp.maxValue = maxHealth;
         }
 
         ResetHealth();
         obj_renderer = gameObject.GetComponent<Renderer>();
     }
 
-    Vector2 WorldToScreenPointAdjusted(Vector3 pos) {
+    Vector3 WorldToScreenPointAdjusted(Vector3 pos) {
         if (mainCamera_comp && canvas_rect_transform) {
-            Vector2 adjustedPosition = mainCamera_comp.WorldToScreenPoint(pos);
+            Vector3 adjustedPosition = mainCamera_comp.WorldToScreenPoint(pos);
             adjustedPosition.x *= canvas_rect_transform.rect.width  / (float)mainCamera_comp.pixelWidth;
             adjustedPosition.y *= canvas_rect_transform.rect.height / (float)mainCamera_comp.pixelHeight;
-            return adjustedPosition - canvas_rect_transform.sizeDelta / 2f;
+            Vector3 canvas_rect_transform3 = new Vector3(canvas_rect_transform.sizeDelta.x, canvas_rect_transform.sizeDelta.y, 0);
+            // return adjustedPosition - canvas_rect_transform.sizeDelta / 2f;
+            return adjustedPosition - canvas_rect_transform3 /  2f;
         }
-        return new Vector2(0, 0);
+        return new Vector3(0, 0, 0);
     }
 
     // Update is called once per frame
@@ -167,30 +165,16 @@ public class DamageableObject : MonoBehaviour
 
             Vector3 middle = (min + max) / 2;
 
-            // Vector3 screenMin = WorldToScreenPointAdjusted(min);
-            // Vector3 screenMax = WorldToScreenPointAdjusted(max);
-            
-            // float screenWidth  = screenMax.x - screenMin.x;
-            // if (screenMin.y < (float)mainCamera_comp.pixelHeight/2)
-            //     ;
-            // screenMin.y = Mathf.Max(screenMin.y, -(float)mainCamera_comp.pixelHeight);
+            Vector3 adjustedPosition = WorldToScreenPointAdjusted(middle);
 
-            // float screenHeight = screenMax.y - screenMin.y;
-            // // Debug.Log((float)mainCamera_comp.pixelHeight);
-            // Debug.Log(screenMax.y.ToString() + "; " +  screenMin.y.ToString());
-            
-
-            // // canvas_obj = mainCamera_obj.transform.GetChild(0).gameObject;
-            // // canvas_comp = canvas_obj.GetComponent<Canvas>();
-
-            // // Canvas canvas_comp = canvas_obj.GetComponent<Canvas>();
-            Vector2 adjustedPosition = WorldToScreenPointAdjusted(middle);
-
-            // adjustedPosition.y += height * 0.5f;
-
-            // healthbar_obj.transform.localPosition = adjustedPosition;
-            if (healthbar_obj)
-                healthbar_obj.transform.localPosition = adjustedPosition;
+            if (healthbar_obj) {
+                if (adjustedPosition.z < 0)
+                    healthbar_obj.SetActive(false);
+                else {
+                    healthbar_obj.transform.localPosition = adjustedPosition;
+                    healthbar_obj.SetActive(true);
+                }
+            }
         }
         else {
             obj_renderer = gameObject.GetComponent<Renderer>();
@@ -204,7 +188,7 @@ public class DamageableObject : MonoBehaviour
         DamagingObject damagingObject = collision.gameObject.GetComponent<DamagingObject>();
 
         if (damagingObject) {
-            GetDamaged(damagingObject.damage);
+            GetDamaged(damagingObject.damage, damagingObject.owner);
             last_hit = time;
         }
         // }
