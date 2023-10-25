@@ -349,6 +349,7 @@
 -analyzer:"/home/penguin/Unity/Hub/Editor/2022.3.9f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/GeneralScripts/DamageableObject.cs"
 "Assets/GeneralScripts/DamagingObject.cs"
+"Assets/GeneralScripts/LevelMap.cs"
 "Assets/GeneralScripts/MapGenerator.cs"
 "Assets/Player/PlayerBehaviour.cs"
 "Assets/Player/PlayerHead.cs"

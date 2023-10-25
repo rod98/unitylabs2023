@@ -851,6 +851,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floor_prefab: {fileID: 1192911569502410219, guid: 1886b302ea1a781e08645d5e2decd997, type: 3}
   house_prefab: {fileID: 4371895194637986704, guid: 3f6cc9f59e5080492b478703514c02a0, type: 3}
+  mapFilename: map1
 --- !u!4 &1104792988
 Transform:
   m_ObjectHideFlags: 0

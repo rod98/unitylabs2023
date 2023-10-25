@@ -43,7 +43,8 @@ public class DamageableObject : MonoBehaviour
         if (health <= 0)
             Die();
 
-        healthbar_comp.value = health;
+        if (healthbar_comp)
+            healthbar_comp.value = health;
     }
 
     void Die() {
