@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -95,8 +96,9 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.DrawRay(contact.point, contact.normal, Color.white);
             // Debug.Log(contact.point);
 
-            // if point is below object - TODO: add check
-            left_jumps = max_jumps;
+            // if point is below object - TODO: make the check better (check the collision is actually between the legs)
+            if (collision.transform.position.y < playerBody.transform.position.y)
+                left_jumps = max_jumps;
         }
         // if (collision.relativeVelocity.magnitude > 2)
         //     audioSource.Play();

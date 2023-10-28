@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 633186111}
   m_Layer: 0
   m_Name: PlayerObject
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -849,7 +849,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12f892b8952f0f446ac2b9c285b43259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floor_prefab: {fileID: 1192911569502410219, guid: 1886b302ea1a781e08645d5e2decd997, type: 3}
   house_prefab: {fileID: 4371895194637986704, guid: 3f6cc9f59e5080492b478703514c02a0, type: 3}
   mapFilename: map1
 --- !u!4 &1104792988
