@@ -73,3 +73,5 @@ crashlytics-build.properties
 
 *.log
 /[Tt]emp
+/[Mm]ailab/[Tt]emp
+EditorInstance.json
