@@ -74,7 +74,7 @@ public class MapGenerator : MonoBehaviour
                     int px = ix;
                     int pz = iz;
                     int posx = px * (int)tile_size.x;
-                    int posy = (int)(tile_size.y * height);
+                    int posy = (int)(tile_size.y * (height - 0.5));
                     int posz = pz * (int)tile_size.z;
                     GameObject floor = Instantiate(current_floor_prefab, new Vector3(posx, posy, posz), Quaternion.identity);
                     floor.name = "floor@" + px.ToString() + "x" +  ((int)height).ToString() + "x" + pz.ToString();
