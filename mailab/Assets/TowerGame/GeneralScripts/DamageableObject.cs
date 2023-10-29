@@ -12,10 +12,10 @@ public class DamageableObject : MonoBehaviour
     private float time = 0.0f;
     private float last_hit = 0.0f;
     private int health;
-    public int maxHealth;
+    public int maxHealth = 100;
     public int pointsForKill = 100;
-    private Slider healthbar_comp;
-    private GameObject healthbar_obj;
+    protected Slider healthbar_comp;
+    public GameObject healthbar_obj = null;
     public GameObject mainCamera_obj = null;
     private Camera mainCamera_comp;
     private GameObject canvas_obj;
@@ -29,7 +29,7 @@ public class DamageableObject : MonoBehaviour
     public void GetDamaged(int damage_value, PlayerBehaviour damager = null) {
         if (health > 0) {
             health -= damage_value;
-            Debug.Log(name + " gets damaged by " + damage_value.ToString() + " (" + health.ToString() + " health left)");
+            // Debug.Log(name + " gets damaged by " + damage_value.ToString() + " (" + health.ToString() + " health left)");
 
             if (damager) {
                 totalDamagers += 1;
@@ -100,37 +100,44 @@ public class DamageableObject : MonoBehaviour
         return mx;
     }
 
+    protected void SetupHealthbar() {
+        if (!healthbar_obj) {
+            GameObject healthBarSlider_prefab = Resources.Load("Prefabs/UI/HealthBarSlider") as GameObject;
+
+            float object_height = MaxHeight(gameObject);
+            Debug.Log("object_height: " + object_height.ToString());
+
+            if (!mainCamera_obj)
+                mainCamera_obj = GameObject.FindGameObjectWithTag("MainCamera"); //.GetComponent<Camera>();
+
+            if (mainCamera_obj)
+                mainCamera_comp = mainCamera_obj.GetComponent<Camera>();
+
+            if (mainCamera_obj && mainCamera_obj.transform.childCount > 0) {
+                canvas_obj = mainCamera_obj.transform.GetChild(0).gameObject;
+                // GameObject canvas_obj = null;
+                Canvas canvas_comp = canvas_obj.GetComponent<Canvas>();
+                canvas_rect_transform = canvas_obj.GetComponent<RectTransform>();
+
+                healthbar_obj = Instantiate(healthBarSlider_prefab, new Vector3(0, 0, 0), Quaternion.identity);
+                // // healthbar_obj = new GameObject();
+                healthbar_obj.transform.SetParent(canvas_comp.transform, true);
+                healthbar_obj.name = "HealthbarObject";
+
+                healthbar_obj.transform.localPosition = new Vector3(0, 0, 0);
+            }
+        }
+
+        healthbar_comp = healthbar_obj.GetComponent<Slider>();
+    }
+
     void Start()
     {
         // Canvas canvas_comp = null;
         // Text text;
         // RectTransform rectTransform;
-        GameObject healthBarSlider_prefab = Resources.Load("Prefabs/UI/HealthBarSlider") as GameObject;
-
-        float object_height = MaxHeight(gameObject);
-        Debug.Log("object_height: " + object_height.ToString());
-
-        if (!mainCamera_obj)
-            mainCamera_obj = GameObject.FindGameObjectWithTag("MainCamera"); //.GetComponent<Camera>();
-
-        if (mainCamera_obj)
-            mainCamera_comp = mainCamera_obj.GetComponent<Camera>();
-
-        if (mainCamera_obj && mainCamera_obj.transform.childCount > 0) {
-            canvas_obj = mainCamera_obj.transform.GetChild(0).gameObject;
-            // GameObject canvas_obj = null;
-            Canvas canvas_comp = canvas_obj.GetComponent<Canvas>();
-            canvas_rect_transform = canvas_obj.GetComponent<RectTransform>();
-
-            healthbar_obj = Instantiate(healthBarSlider_prefab, new Vector3(0, 0, 0), Quaternion.identity);
-            // // healthbar_obj = new GameObject();
-            healthbar_obj.transform.SetParent(canvas_comp.transform, true);
-            healthbar_obj.name = "HealthbarObject";
-
-            healthbar_obj.transform.localPosition = new Vector3(0, 0, 0);
-            healthbar_comp = healthbar_obj.GetComponent<Slider>();
-        }
-
+       
+        SetupHealthbar();
         ResetHealth();
         obj_renderer = gameObject.GetComponent<Renderer>();
     }

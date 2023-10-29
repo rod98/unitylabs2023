@@ -43,7 +43,7 @@ public class MapGenerator : MonoBehaviour
 
         Debug.Log("Instantiated the house");
 
-        GameObject level = new();
+        GameObject level = new("LevelMap");
 
         if (text) {
             LevelMap mapJson = JsonUtility.FromJson<LevelMap>(text.text);
@@ -74,14 +74,15 @@ public class MapGenerator : MonoBehaviour
                     int px = ix;
                     int pz = iz;
                     int posx = px * (int)tile_size.x;
-                    int posy = (int)(tile_size.y * (height - 0.5));
+                    int posy = (int)(tile_size.y * height);
                     int posz = pz * (int)tile_size.z;
                     GameObject floor = Instantiate(current_floor_prefab, new Vector3(posx, posy, posz), Quaternion.identity);
+                    floor.name = "floor@" + px.ToString() + "x" +  ((int)height).ToString() + "x" + pz.ToString();
                     floor.transform.SetParent(level.transform);
                 }
 
             int pposx = (int)tile_size.x * (int)mapJson.starting_player_position.x;
-            int pposy = (int)(mapJson.GetHeight((int)mapJson.starting_player_position.x, (int)mapJson.starting_player_position.z) * tile_size.y);
+            int pposy = (int)(mapJson.GetHeight((int)mapJson.starting_player_position.x, (int)mapJson.starting_player_position.z) * tile_size.y) + 1;
             int pposz = (int)tile_size.z * (int)mapJson.starting_player_position.z;
             GameObject playerObj = GameObject.FindGameObjectsWithTag("Player")[0];
             playerObj.transform.localPosition = new(pposx, pposy, pposz);

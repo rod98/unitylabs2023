@@ -147,7 +147,7 @@ public class PlayerBehaviour : MonoBehaviour
             dobj.owner = this;
 
             Rigidbody rb = attack_obj.GetComponent<Rigidbody>();
-            rb.velocity = 10 * vRotationalObject.transform.forward.normalized;
+            rb.velocity = 100 * vRotationalObject.transform.forward.normalized;
 
             lastAttack = time;
         }

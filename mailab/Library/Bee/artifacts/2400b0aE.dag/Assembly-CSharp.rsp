@@ -353,6 +353,7 @@
 "Assets/TowerGame/GeneralScripts/LevelMap.cs"
 "Assets/TowerGame/GeneralScripts/MapGenerator.cs"
 "Assets/TowerGame/Player/PlayerBehaviour.cs"
+"Assets/TowerGame/Player/PlayerDamageable.cs"
 "Assets/TowerGame/Player/PlayerHead.cs"
 "Assets/TowerGame/TextMesh Pro/Examples & Extras/Scripts/Benchmark01.cs"
 "Assets/TowerGame/TextMesh Pro/Examples & Extras/Scripts/Benchmark01_UGUI.cs"
