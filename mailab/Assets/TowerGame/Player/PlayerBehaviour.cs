@@ -24,7 +24,7 @@ public class PlayerBehaviour : MonoBehaviour
     private int max_jumps = 3;
     private int left_jumps = 0;
 
-    float rspeed = 3f;
+    float rspeed = 10f;
 
     private GameObject hRotationalObject;
     private GameObject vRotationalObject;
@@ -49,30 +49,18 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void Update()
     {
-        if(Input.GetAxis("Mouse X")<0f){
-            //Code for action on mouse moving left
-            hRotationalObject.transform.Rotate(0f, -rspeed, 0f);
-        }
-        if(Input.GetAxis("Mouse X")>0f){
-            //Code for action on mouse moving right
-            hRotationalObject.transform.Rotate(0f, rspeed, 0f);
-        }
+
+        float dx = Input.GetAxis("Mouse X");
+        hRotationalObject.transform.Rotate(0f, dx * rspeed, 0f);
 
         float vx_angle = vRotationalObject.transform.eulerAngles.x;
 
         if (vx_angle > 180)
             vx_angle -= 360;
 
-        if (Input.GetAxis("Mouse Y") < 0f) {
-            //Code for action on mouse moving up
-            if (vx_angle < 75)
-                vRotationalObject.transform.Rotate( rspeed, 0f, 0f);
-        }
-        if (Input.GetAxis("Mouse Y") > 0f) {
-            //Code for action on mouse moving down
-            if (vx_angle > -75)
-                vRotationalObject.transform.Rotate(-rspeed, 0f, 0f);
-        }
+        float dy = Input.GetAxis("Mouse Y");
+        if ((dy < 0f && vx_angle < 75) || (dy > 0 && vx_angle > -75)) 
+            vRotationalObject.transform.Rotate(-dy * rspeed, 0f, 0f);
 
         // Debug.Log(
         //     ((int)vx_angle).ToString() + "; " +
@@ -121,7 +109,7 @@ public class PlayerBehaviour : MonoBehaviour
         int fwsgn = 0;
         int lrsgn = 0;
 
-        float hangle = hRotationalObject.transform.eulerAngles.y;
+        // float hangle = hRotationalObject.transform.eulerAngles.y;
 
         if (Input.GetKey(jumpKey) && time - lastJump >= jumpTimeout && left_jumps > 0) {
             // myBody.velocity = new Vector3(0,10,0);
