@@ -47,6 +47,10 @@ public class DamageableObject : MonoBehaviour
             healthbar_comp.value = health;
     }
 
+    void PlayDeathAnimation() {
+
+    }
+
     void Die() {
         Debug.Log(name + " is dead!");
         if (healthbar_comp)
@@ -60,6 +64,8 @@ public class DamageableObject : MonoBehaviour
             // entry.Value or entry.Key
             entry.Key.AddKillPoints((int)(pointsForKill * entry.Value * 100.0 / totalDamagers));
         }
+
+        PlayDeathAnimation();
             
         Destroy(gameObject);
         Destroy(this);
